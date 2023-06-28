@@ -1,4 +1,5 @@
-import { IsIn, IsNotEmpty, IsNumber, IsPhoneNumber, IsPositive, IsString, Length, Matches, MinLength, ValidateNested } from 'class-validator'
+import { IsIn, IsNotEmpty, IsNumber, IsOptional, IsPhoneNumber, IsPositive, IsString, Length, Matches, MinLength, ValidateIf, ValidateNested } from 'class-validator'
+import { Type } from 'class-transformer'
 import { PartialType } from '@nestjs/mapped-types';
 
 class OwnerInfo{
@@ -14,7 +15,7 @@ class OwnerInfo{
     readonly surname: string
 
     @IsString()
-    @Matches(/^[0-9]{7}-[0-9]$/, {message: 'Invalid dui'})
+    @Matches(/^\d{7}-\d{1}$/, {message: 'Invalid dui'})
     @IsNotEmpty({message: 'dui is required'})
     readonly dui: string
 
@@ -29,11 +30,11 @@ export class CreatePetDto {
     @IsString()
     @IsNotEmpty()
     @MinLength(3)
-    readonly name: string
+    name: string
 
     @IsString()
     @IsNotEmpty()
-    readonly species: string
+    species: string
 
     @IsString()
     @IsNotEmpty()
@@ -42,6 +43,7 @@ export class CreatePetDto {
     
     @ValidateNested()
     @IsNotEmpty()
+    @Type(()=> OwnerInfo)
     readonly ownerInfo: OwnerInfo
 
     @IsNumber()
@@ -57,4 +59,23 @@ export class CreatePetDto {
 
 export class UpdatePetDto extends PartialType(CreatePetDto) {}
 
+export class QueryFindPetDto {
 
+    @IsString()
+    @IsOptional()
+    readonly name?: string
+
+    @IsString()
+    @IsOptional()
+    readonly species?: string
+
+    @IsNumber()
+    @IsOptional()
+    readonly min_age?: number
+
+    @IsString()
+    @IsOptional()
+    @ValidateIf((obj,value)=> value !== undefined)
+    readonly max_age?: number
+
+}

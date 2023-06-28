@@ -1,24 +1,51 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePetDto, UpdatePetDto } from './dto/pets.dto';
+import { CreatePetDto, QueryFindPetDto, UpdatePetDto } from './dto/pets.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import {Model} from 'mongoose'
 import { Pet } from './entities/pet.entity';
+import { Capitalazed } from 'src/utils/capitalazed';
+
+interface IWhere{
+  name?: string
+  species?: string
+}
 
 @Injectable()
 export class PetsService {
 
   constructor(
-    @InjectModel(Pet.name,'Pet')
+    @InjectModel(Pet.name)
     private readonly petModel: Model<Pet>
   ){}
 
   async create(createPetDto: CreatePetDto) {
-    const newPet = await this.petModel.create(createPetDto)
-    return newPet;
+    
+    const transformWords = Capitalazed([createPetDto.name,createPetDto.species])
+
+    createPetDto.name = transformWords[0]
+    createPetDto.species = transformWords[1]
+
+    return  await this.petModel.create(createPetDto);
   }
 
-  async findAll() {
-    const pets = await this.petModel.find()
+  async findAll(query: QueryFindPetDto) {
+    
+    let where: IWhere= {  
+    }
+
+    if ( query.species ){
+      where.species = query.species
+    }else if( query.name ){
+      where.name = query.name
+    } 
+
+    if ( query.species  && query.name) {
+      where.name = query.name
+      where.species = query.species
+     }
+
+    const pets = await this.petModel.find(where)
+    
     return pets
   }
 

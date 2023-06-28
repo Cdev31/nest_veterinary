@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PetsService } from './pets.service';
-import { CreatePetDto, UpdatePetDto } from './dto/pets.dto';
+import { CreatePetDto, QueryFindPetDto, UpdatePetDto } from './dto/pets.dto';
 
 @Controller('pets')
 export class PetsController {
@@ -15,8 +15,10 @@ export class PetsController {
   }
 
   @Get()
-  findAll() {
-    return this.petsService.findAll();
+  findAll(
+    @Query() query: QueryFindPetDto
+  ) {
+    return this.petsService.findAll(query);
   }
 
   @Get(':id')
