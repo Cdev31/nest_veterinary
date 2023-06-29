@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PetsService } from './pets.service';
 import { CreatePetDto, QueryFindPetDto, UpdatePetDto } from './dto/pets.dto';
+import { PipeMongoIdPipe } from 'src/common/pipes/pipe-mongo-id.pipe';
 
 @Controller('pets')
 export class PetsController {
@@ -22,7 +23,7 @@ export class PetsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', PipeMongoIdPipe) id: string) {
     return this.petsService.findOne(id);
   }
 

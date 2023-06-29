@@ -75,7 +75,7 @@ export class QueryFindPetDto {
 
     @IsString()
     @IsOptional()
-    @ValidateIf((obj,value)=> value !== undefined)
+    @ValidateIf((_,value)=> value !== undefined)
     readonly max_age?: number
 
 }

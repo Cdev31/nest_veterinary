@@ -14,6 +14,8 @@ async function bootstrap() {
     })
   )
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT, ()=>{
+    console.log(`Api in Port: ${process.env.PORT}`)
+  });
 }
 bootstrap();
